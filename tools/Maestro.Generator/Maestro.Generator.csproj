@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,6 +56,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\ModelBase.cs" />
+    <Compile Include="Model\Controls\ControlBase.cs" />
+    <Compile Include="Model\Controls\HorizontalAlignment.cs" />
+    <Compile Include="Model\Controls\VerticalAlignment.cs" />
+    <Compile Include="Model\Parameters\Boolean.cs" />
+    <Compile Include="Model\Parameters\Button.cs" />
+    <Compile Include="Model\Parameters\Enumeration.cs" />
+    <Compile Include="Model\Parameters\Integer.cs" />
+    <Compile Include="Model\Parameters\ParameterBase.cs" />
+    <Compile Include="Model\Parameters\ByteStream.cs" />
+    <Compile Include="Model\Parameters\String.cs" />
+    <Compile Include="Model\View.cs" />
+    <Compile Include="View\DataBaseTabs.xaml.cs">
+      <DependentUpon>DataBaseTabs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParameterList.xaml.cs">
+      <DependentUpon>ParameterList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Parameters\Boolean.xaml.cs">
+      <DependentUpon>Boolean.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Parameters\ParameterBase.xaml.cs">
+      <DependentUpon>ParameterBase.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -63,12 +88,30 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DataContext.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\DataBaseTabs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParameterList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Parameters\Boolean.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Parameters\ParameterBase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Database.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -93,6 +136,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="View\Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

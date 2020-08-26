@@ -3,10 +3,48 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Maestro.Generator"
+        xmlns:model="clr-namespace:Maestro.Generator"
+        xmlns:view="clr-namespace:Maestro.Generator.View"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="{Binding FileName, StringFormat=Maestro Generator - {0}}" Height="900" Width="1500">
+    <Window.DataContext>
+        <model:DataContext/>
+    </Window.DataContext>
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" Executed="Save" />
+        <CommandBinding Command="Open" Executed="Open" />
+        <CommandBinding Command="New" Executed="New" />
+        <CommandBinding Command="SaveAs" Executed="SaveAs" />
+        <CommandBinding Command="Close" Executed="Quit" />
+        <CommandBinding Command="Undo" Executed="Undo" />
+        <CommandBinding Command="Redo" Executed="Redo" />
+    </Window.CommandBindings>
+
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Click="New"/>
+                <MenuItem Header="_Open ..." Click="Open"/>
+                <MenuItem Header="_Save" Click="Save"/>
+                <MenuItem Header="S_ave as ..." Click="SaveAs"/>
+                <MenuItem Header="Undo" Click="Undo"/>
+                <MenuItem Header="Redo" Click="Redo"/>
+                <MenuItem Header="_Quit" Click="Quit"/>
+            </MenuItem>
+
+        </Menu>
+
+        <view:DataBaseTabs DataContext="{Binding Database}" Grid.Row="1"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Height="3"/>
+        <GroupBox Header="Logs" Grid.Row="3">
+            <TextBox Name="LogsTxt" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" IsReadOnly="True"/>
+        </GroupBox>
+
     </Grid>
 </Window>

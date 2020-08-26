@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="Maestro.Generator.View.DataBaseTabs"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:model="clr-namespace:Maestro.Generator.Model"
+             xmlns:view="clr-namespace:Maestro.Generator.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <model:Database/>
+    </UserControl.DataContext>
+    <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <TabItem Header="_Configuration">
+            <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Names" Grid.Column="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Content="_Product:" Grid.Row="0" Target="{Binding ElementName=ProductTxt}"/>
+                            <Label Content="_Firmware:" Grid.Row="1" Target="{Binding ElementName=FirmwareTxt}"/>
+                            <Label Content="_Base URL:" Grid.Row="2" Target="{Binding ElementName=BaseURLTxt}"/>
+                            <Label Content="_Default Language:" Grid.Row="3" Target="{Binding ElementName=LanguageTxt}"/>
+
+                            <TextBox Grid.Column="1" Grid.Row="0" Margin="2" Name="ProductTxt" Text="{Binding Product}"/>
+                            <TextBox Grid.Column="1" Grid.Row="1" Margin="2" Name="FirmwareTxt" Text="{Binding Firmware}"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Margin="2" Name="BaseURLTxt" Text="{Binding BaseURL}"/>
+                            <ComboBox Grid.Column="1" Grid.Row="3" Margin="2" Name="LanguageTxt" SelectedValue="{Binding DefaultLanguage, Mode=TwoWay}" ItemsSource="{Binding Languages, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="Versions" Grid.Column="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Content="_Major:" Grid.Row="0" Target="{Binding ElementName=MajorTxt}"/>
+                            <Label Content="M_inor:" Grid.Row="1" Target="{Binding ElementName=MinorTxt}"/>
+                            <Label Content="B_uild:" Grid.Row="2" Target="{Binding ElementName=BuildTxt}"/>
+                            <Label Content="_Hardware:" Grid.Row="3" Target="{Binding ElementName=HardwareTxt}"/>
+
+                            <TextBox Grid.Column="1" Grid.Row="0" Margin="2" Name="MajorTxt" Text="{Binding VersionMajor}" Width="100"/>
+                            <TextBox Grid.Column="1" Grid.Row="1" Margin="2" Name="MinorTxt" Text="{Binding VersionMinor}"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" Margin="2" Name="BuildTxt" Text="{Binding VersionBuild}"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Margin="2" Name="HardwareTxt" Text="{Binding HardwareRevision}"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+
+                <GroupBox Header="Code Generation">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Code _generation directory:" Target="{Binding ElementName=DirectoryTxt}"/>
+                            <TextBox Grid.Column="1" Margin="2" Name="DirectoryTxt" Text="{Binding GenerationDirectory}"/>
+
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+
+        <TabItem Header="P_arameters">
+            <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TabItem Header="_Common">
+                    <view:ParameterList DataContext="{Binding CommonParameters}"/>
+                </TabItem>
+                <TabItem Header="_Setup">
+                    <view:ParameterList DataContext="{Binding SetupParameters}"/>
+                </TabItem>
+            </TabControl>
+
+        </TabItem>
+
+        <TabItem Header="_Views">
+
+        </TabItem>
+
+        <TabItem Header="_Translations">
+
+        </TabItem>
+
+        <TabItem Header="P_lugins">
+
+        </TabItem>
+
+    </TabControl>
+
+</UserControl>
