@@ -194,6 +194,5 @@ namespace Maestro.Generator
                 }
             }
         }
-
     }
 }

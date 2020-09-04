@@ -56,6 +56,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper.cs" />
+    <Compile Include="Model\Controls\Grid.cs" />
+    <Compile Include="Model\Controls\Groupbox.cs" />
+    <Compile Include="Model\Controls\Menu.cs" />
+    <Compile Include="Model\Controls\Text.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Controls\ControlBase.cs" />
     <Compile Include="Model\Controls\HorizontalAlignment.cs" />
@@ -67,7 +72,10 @@
     <Compile Include="Model\Parameters\ParameterBase.cs" />
     <Compile Include="Model\Parameters\ByteStream.cs" />
     <Compile Include="Model\Parameters\String.cs" />
-    <Compile Include="Model\View.cs" />
+    <Compile Include="Model\Controls\View.cs" />
+    <Compile Include="View\Controls\ControlToolBox.xaml.cs">
+      <DependentUpon>ControlToolBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DataBaseTabs.xaml.cs">
       <DependentUpon>DataBaseTabs.xaml</DependentUpon>
     </Compile>
@@ -77,8 +85,26 @@
     <Compile Include="View\Parameters\Boolean.xaml.cs">
       <DependentUpon>Boolean.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Parameters\Button.xaml.cs">
+      <DependentUpon>Button.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Parameters\ByteStream.xaml.cs">
+      <DependentUpon>ByteStream.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Parameters\Enumeration.xaml.cs">
+      <DependentUpon>Enumeration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Parameters\Integer.xaml.cs">
+      <DependentUpon>Integer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Parameters\ParameterBase.xaml.cs">
       <DependentUpon>ParameterBase.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Parameters\String.xaml.cs">
+      <DependentUpon>String.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\View.xaml.cs">
+      <DependentUpon>View.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -93,6 +119,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\Controls\ControlToolBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DataBaseTabs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -105,7 +135,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Parameters\Button.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Parameters\ByteStream.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Parameters\Enumeration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Parameters\Integer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Parameters\ParameterBase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Parameters\String.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\View.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,8 +191,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="View\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

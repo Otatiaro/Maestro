@@ -1,11 +1,9 @@
 ﻿using Maestro.Generator.Model.Parameters;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace Maestro.Generator.Model
@@ -14,14 +12,14 @@ namespace Maestro.Generator.Model
     {
         public Database()
         {
-            ModelBase.ListNames.Add(commonParameters, "Common parameters");
-            ModelBase.ListNames.Add(setupParameters, "Setup parameters");
+            ListNames.Add(CommonParameters, "Common parameters");
+            ListNames.Add(SetupParameters, "Setup parameters");
         }
 
         ~Database()
         {
-            ModelBase.ListNames.Remove(commonParameters);
-            ModelBase.ListNames.Remove(setupParameters);
+            ListNames.Remove(CommonParameters);
+            ListNames.Remove(SetupParameters);
         }
 
         public string Product { get => product; set => Set(ref product, value); }
@@ -33,33 +31,28 @@ namespace Maestro.Generator.Model
         public ushort HardwareRevision { get => hardwareRevision; set => Set(ref hardwareRevision, value); }
         public string DefaultLanguage { get => defaultLanguage; set => Set(ref defaultLanguage, value); }
         public string GenerationDirectory { get => generationDirectory; set => Set(ref generationDirectory, value); }
-        public byte SetupCount { get => setupCount; set => Set(ref setupCount, value); }
+        public byte SetupCount { get => setupCount; set { Set(ref setupCount, value); } }
 
-        public ObservableCollection<ParameterBase> CommonParameters { get => commonParameters; set => Set(ref commonParameters, value); }
-        public ObservableCollection<ParameterBase> SetupParameters { get => setupParameters; set => Set(ref setupParameters, value); }
+        public ObservableCollection<ParameterBase> CommonParameters { get; } = new ObservableCollection<ParameterBase>();
+
+
+        public ObservableCollection<ParameterBase> SetupParameters { get; } = new ObservableCollection<ParameterBase>();
+        public ObservableCollection<View> Views { get; } = new ObservableCollection<View>();
+
+        public ushort DefaultView { get => defaultView; set => Set(ref defaultView, value); }
+
+        public byte DefaultSetup { get => defaultSetup; set => Set(ref defaultSetup, value); }
 
 
         public static IEnumerable<KeyValuePair<string, string>> Languages => CultureInfo.GetCultures(CultureTypes.NeutralCultures)
                     .Select(culture => new KeyValuePair<string, string>(culture.TwoLetterISOLanguageName, culture.DisplayName))
                     .OrderBy(pair => pair.Value);
 
+        public static IEnumerable<byte> Setups => Enumerable.Range(1, 200).Select(i => (byte)i);
+
         protected static XmlSerializer serializer = new XmlSerializer(typeof(Database));
 
-        [XmlElement(typeof(Boolean))]
-        [XmlElement(typeof(Button))]
-        [XmlElement(typeof(Enumeration))]
-        [XmlElement(typeof(Integer))]
-        [XmlElement(typeof(String))]
-        [XmlElement(typeof(ByteStream))]
-        private ObservableCollection<ParameterBase> commonParameters = new ObservableCollection<ParameterBase>();
 
-        [XmlElement(typeof(Boolean))]
-        [XmlElement(typeof(Button))]
-        [XmlElement(typeof(Enumeration))]
-        [XmlElement(typeof(Integer))]
-        [XmlElement(typeof(String))]
-        [XmlElement(typeof(ByteStream))]
-        private ObservableCollection<ParameterBase> setupParameters = new ObservableCollection<ParameterBase>();
 
         private string product = "Sample Product";
         private string firmware = "Sample firmware";
@@ -70,7 +63,9 @@ namespace Maestro.Generator.Model
         private ushort hardwareRevision = 4;
         private string defaultLanguage = "en";
         private string generationDirectory = "./";
+        public ushort defaultView = 0;
         private byte setupCount = 3;
+        private byte defaultSetup = 1;
 
         public void SaveXml(string path)
         {
@@ -90,6 +85,26 @@ namespace Maestro.Generator.Model
         public override string ToString()
         {
             return $"{Product} ({Firmware})";
+        }
+
+        protected override IEnumerable<(string, object)> Errors()
+        {
+            if (DefaultSetup == 0)
+                yield return (nameof(DefaultSetup), "The default setup cannot be zero");
+
+            if(defaultSetup > setupCount)
+            {
+                yield return (nameof(DefaultSetup), $"The default setup is too high, there are only {setupCount} setups");
+                yield return (nameof(SetupCount), $"The setup count is too low for the default setup");
+            }
+        }
+
+
+        public override IEnumerable<string> TranslatableResources()
+        {
+            return CommonParameters.SelectMany(p => p.TranslatableResources())
+                .Concat(SetupParameters.SelectMany(p => p.TranslatableResources()))
+                .Concat(Views.SelectMany(v => v.TranslatableResources()));
         }
     }
 }

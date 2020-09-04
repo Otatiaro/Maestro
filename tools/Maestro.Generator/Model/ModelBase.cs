@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Maestro.Generator
 {
-    public class ModelBase : INotifyPropertyChanged
+    public abstract class ModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -15,7 +17,8 @@ namespace Maestro.Generator
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             OnChanging?.Invoke(new PropertyChange(this, propertyName, typeof(T), field, value));
             field = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            NotifyChange();
+
             return true;
         }
 
@@ -30,7 +33,16 @@ namespace Maestro.Generator
             OnChanging?.Invoke(new ListSuppression(list, typeof(T), value));
         }
 
+        public IEnumerable GetErrors(string propertyName)
+        {
+            foreach (var e in Errors())
+                if (e.Item1 == propertyName)
+                    yield return e.Item2;
+        }
+
         public static Dictionary<object, string> ListNames { get; } = new Dictionary<object, string>();
+
+        public bool HasErrors => Errors().Any();
 
         public struct PropertyChange
         {
@@ -113,5 +125,25 @@ namespace Maestro.Generator
 
         public delegate void OnChangingEventHandler(object change);
         public static event OnChangingEventHandler OnChanging;
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+        protected abstract IEnumerable<(string, object)> Errors();  
+        
+        protected void NotifyChange(string propertyName = null)
+        {
+            if (string.IsNullOrEmpty(propertyName))
+                foreach (var p in GetType().GetProperties())
+                {
+                    ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(p.Name));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p.Name));
+                }
+            else
+            {
+                ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public abstract IEnumerable<string> TranslatableResources();
     }
 }

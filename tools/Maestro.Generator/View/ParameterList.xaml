@@ -3,15 +3,36 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Maestro.Generator.View.Parameters"
+             xmlns:view="clr-namespace:Maestro.Generator.View.Parameters"
+             xmlns:model="clr-namespace:Maestro.Generator.Model.Parameters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type model:Boolean}">
+            <view:Boolean/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type model:Button}">
+            <view:Button/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type model:ByteStream}">
+            <view:ByteStream/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type model:Enumeration}">
+            <view:Enumeration/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type model:Integer}">
+            <view:Integer/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type model:String}">
+            <view:String/>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*" MinWidth="300"/>
             <ColumnDefinition Width="3"/>
-            <ColumnDefinition Width="*" MinWidth="300"/>
+            <ColumnDefinition Width="2*" MinWidth="300"/>
         </Grid.ColumnDefinitions>
 
         <GroupBox Header="Tool box" Grid.Column="0">
@@ -49,10 +70,14 @@
         </ListView>
 
         <GridSplitter Grid.Column="2" Width="3" VerticalAlignment="Stretch" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
-        <StackPanel Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <local:ParameterBase DataContext="{Binding ElementName=Selector, Path=SelectedItem}"/>
-            <ContentControl Content="{Binding ElementName=Selector, Path=SelectedItem}" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </StackPanel>
+        <Grid Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <view:ParameterBase DataContext="{Binding ElementName=Selector, Path=SelectedItem}"/>
+            <ContentControl Content="{Binding ElementName=Selector, Path=SelectedItem}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
+        </Grid>
 
     </Grid>
 </UserControl>

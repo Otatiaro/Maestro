@@ -7,6 +7,39 @@
         xmlns:view="clr-namespace:Maestro.Generator.View"
         mc:Ignorable="d"
         Title="{Binding FileName, StringFormat=Maestro Generator - {0}}" Height="900" Width="1500">
+
+    <Window.Resources>
+        <Style x:Key="validationTooltipStyle" TargetType="{x:Type ToolTip}">
+            <Setter Property="DataContext" Value="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="LightGray" BorderBrush="DarkRed" BorderThickness="2" Padding="5" CornerRadius="8">
+                            <ItemsControl ItemsSource="{Binding Path=(Validation.Errors)}" Margin="2" >
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ErrorContent}" Foreground="Red"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ToolTip x:Key="validationTooltip" Style="{StaticResource validationTooltipStyle}"/>
+
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{StaticResource validationTooltip}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
     <Window.DataContext>
         <model:DataContext/>
     </Window.DataContext>
@@ -40,7 +73,7 @@
 
         </Menu>
 
-        <view:DataBaseTabs DataContext="{Binding Database}" Grid.Row="1"/>
+        <view:DataBaseTabs DataContext="{Binding Database}" Grid.Row="1" />
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Height="3"/>
         <GroupBox Header="Logs" Grid.Row="3">
             <TextBox Name="LogsTxt" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" IsReadOnly="True"/>

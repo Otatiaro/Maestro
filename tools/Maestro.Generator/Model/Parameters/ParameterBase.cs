@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Maestro.Generator.Model.Parameters
@@ -28,7 +29,15 @@ namespace Maestro.Generator.Model.Parameters
         private string tag = "display_name";
 
         public string Tooltip { get => tooltip; set => Set(ref tooltip, value); }
-        public string DisplayName { get => displayName; set => Set(ref displayName, value); }
+        public string DisplayName
+        {
+            get => displayName; set
+            {
+                if (Tag == displayName.ToC())
+                    Tag = value.ToC();
+                Set(ref displayName, value);
+            }
+        }
         public string Tag { get => tag; set => Set(ref tag, value); }
 
         public string DisplayType => GetType().Name;
@@ -38,5 +47,15 @@ namespace Maestro.Generator.Model.Parameters
         {
             return $"{GetType().Name} \"{displayName}\" ({tag})";
         }
+
+        protected override IEnumerable<(string, object)> Errors()
+        {
+            if (string.IsNullOrWhiteSpace(DisplayName))
+                yield return (nameof(Tooltip), "Display name cannot be empty");
+            foreach (var e in Tag.IsC())
+                yield return (nameof(Tag), $"{nameof(Tag)} {e}");
+        }
+
+        public override IEnumerable<string> TranslatableResources() => new[] { Tooltip, DisplayName };
     }
 }
