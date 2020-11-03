@@ -22,7 +22,8 @@ enum class Command : uint8_t
 	CopySetup = 6,
 	ActiveView = 7,
 	ShowMessage = 8,
-	PluginCommand = 9,
+	MessageResult = 9,
+	PluginCommand = 10,
 };
 
 template<typename Command, typename SizeType>

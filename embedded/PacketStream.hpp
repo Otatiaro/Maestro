@@ -73,10 +73,7 @@ public:
 			m_escaping = true;
 			return;
 		}
-		else
-		{
-			m_escaping = false;
-		}
+		m_escaping = false;
 
 		switch (m_state)
 		{
