@@ -9,4 +9,8 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Brotli.NET" Version="2.0.4.2" />
+  </ItemGroup>
+
 </Project>
