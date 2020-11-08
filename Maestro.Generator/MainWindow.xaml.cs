@@ -5,22 +5,25 @@ using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using Maestro.Common.Model;
+using Maestro.Generator.Annotations;
 
 namespace Maestro.Generator
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private const string FileFilter = "Maestro Database|*.mtrdb";
+        private const string FileFilter = "Maestro Compressed Database|*.mtrcp|Maestro Database|*.mtrdb";
         private const string LastFileConfig = "LastFile";
         private readonly Configuration configuration;
         private readonly Stack<object> undoes = new Stack<object>();
         private readonly Stack<object> redoes = new Stack<object>();
         private bool disableUndo = false;
+        private bool _isDirty = false;
 
 
         public DataContext Context { get; set; } = new DataContext();
@@ -42,6 +45,7 @@ namespace Maestro.Generator
 
             ModelBase.OnChanging += ModelBase_OnChanging;
             DataContext = Context;
+            OnPropertyChanged(nameof(WindowTitle));
         }
 
         private void ModelBase_OnChanging(object delta)
@@ -67,6 +71,7 @@ namespace Maestro.Generator
                     throw new Exception();
             }
             LogsTxt.ScrollToEnd();
+            IsDirty = true;
         }
 
         private void ResetLogs()
@@ -78,17 +83,49 @@ namespace Maestro.Generator
 
         private void New(object sender, RoutedEventArgs e)
         {
+            if (IsDirty)
+            {
+                switch (MessageBox.Show("Save before creating new ?", "File is not saved",
+                    MessageBoxButton.YesNoCancel))
+                {
+                    case MessageBoxResult.No:
+                        break;
+                    case MessageBoxResult.Yes:
+                        Save(this, new RoutedEventArgs());
+                        break;
+                    default:
+                        return;
+                }
+            }
+
             Context.Reset();
+            IsDirty = false;
             ResetLogs();
         }
 
         private void Open(object sender, RoutedEventArgs e)
         {
+            if (IsDirty)
+            {
+                switch (MessageBox.Show("Save before opening ?", "File is not saved",
+                    MessageBoxButton.YesNoCancel))
+                {
+                    case MessageBoxResult.No:
+                        break;
+                    case MessageBoxResult.Yes:
+                        Save(this, new RoutedEventArgs());
+                        break;
+                    default:
+                        return;
+                }
+            }
+
             var openFileDialog = new OpenFileDialog { Filter = FileFilter };
             var result = openFileDialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
                 Context.Load(openFileDialog.FileName);
+                IsDirty = false;
                 UpdateSettings();
                 ResetLogs();
             }
@@ -98,7 +135,10 @@ namespace Maestro.Generator
             if (string.IsNullOrWhiteSpace(Context.FileName))
                 SaveAs(this, e);
             else
+            {
                 Context.Save();
+                IsDirty = false;
+            }
         }
         private void SaveAs(object sender, RoutedEventArgs e)
         {
@@ -107,6 +147,7 @@ namespace Maestro.Generator
             if (result.HasValue && result.Value)
             {
                 Context.Save(saveFileDialog.FileName);
+                IsDirty = false;
                 UpdateSettings();
             }
         }
@@ -125,7 +166,19 @@ namespace Maestro.Generator
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            Save(this, new RoutedEventArgs());
+            if (IsDirty)
+            {
+                switch (MessageBox.Show("Save before closing ?", "File is not saved", MessageBoxButton.YesNoCancel))
+                {
+                    case MessageBoxResult.Yes:
+                        Save(this, new RoutedEventArgs());
+                        break;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                }
+            }
+
             base.OnClosing(e);
         }
 
@@ -137,13 +190,19 @@ namespace Maestro.Generator
             Context.Generate();
         }
 
+        public bool IsDirty
+        {
+            get => _isDirty;
+            private set { _isDirty = value; OnPropertyChanged(nameof(IsDirty)); OnPropertyChanged(nameof(WindowTitle)); }
+        }
+
         private void Undo(object sender, RoutedEventArgs e)
         {
-            if(undoes.Count != 0)
+            if (undoes.Count != 0)
             {
                 var delta = undoes.Pop();
                 disableUndo = true;
-                switch(delta)
+                switch (delta)
                 {
                     case ModelBase.PropertyChange change:
                         change.Undo();
@@ -166,11 +225,13 @@ namespace Maestro.Generator
                 }
                 disableUndo = false;
             }
+            OnPropertyChanged(nameof(WindowTitle));
+
         }
 
         private void Redo(object sender, RoutedEventArgs e)
         {
-            if(redoes.Count != 0)
+            if (redoes.Count != 0)
             {
                 var delta = redoes.Pop();
                 switch (delta)
@@ -194,6 +255,24 @@ namespace Maestro.Generator
                         throw new Exception();
                 }
             }
+            OnPropertyChanged(nameof(WindowTitle));
+        }
+
+        public string WindowTitle
+        {
+            get
+            {
+                var dirty = IsDirty ? "*" : string.Empty;
+                return $"Maestro Generator : {dirty}{Context.FileName}";
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

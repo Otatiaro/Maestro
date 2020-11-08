@@ -5,7 +5,8 @@ namespace Maestro.Common.Model
 {
     public class Descriptor : ModelBase
     {
-        public string Product { get => product; set => Set(ref product, value); }
+        public string Product { get => product; 
+            set => Set(ref product, value); }
         public string Firmware { get => firmware; set => Set(ref firmware, value); }
         public ushort VersionMajor { get => versionMajor; set => Set(ref versionMajor, value); }
         public ushort VersionMinor { get => versionMinor; set => Set(ref versionMinor, value); }

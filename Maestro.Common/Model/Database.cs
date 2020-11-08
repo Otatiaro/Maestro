@@ -25,10 +25,8 @@ namespace Maestro.Common.Model
 
         public string BaseURL { get => baseURL; set => Set(ref baseURL, value); }
         public string DefaultLanguage { get => defaultLanguage; set => Set(ref defaultLanguage, value); }
-        public string GenerationDirectory { get => generationDirectory; set => Set(ref generationDirectory, value); }
         public byte SetupCount { get => setupCount; set => Set(ref setupCount, value); }
-        public Descriptor Descriptor { get => descriptor; set => Set(ref descriptor, value);
-        }
+        public Descriptor Descriptor { get => descriptor; set => Set(ref descriptor, value); }
 
         public ObservableCollection<ParameterBase> CommonParameters { get; } = new ObservableCollection<ParameterBase>();
 
@@ -47,37 +45,30 @@ namespace Maestro.Common.Model
 
         public static IEnumerable<byte> Setups => Enumerable.Range(1, 200).Select(i => (byte)i);
 
-        protected static XmlSerializer serializer = new XmlSerializer(typeof(Database));
+        protected static XmlSerializer Serializer = new XmlSerializer(typeof(Database));
 
 
 
         private string baseURL = "maestro.synapseos.org";
         private string defaultLanguage = "en";
-        private string generationDirectory = "./";
         public ushort defaultView = 0;
         private byte setupCount = 3;
         private byte defaultSetup = 1;
         private Descriptor descriptor = new Descriptor();
 
-        public void SaveXml(string path)
+        public byte[] SaveXml()
         {
-            if (File.Exists(path))
-                File.Delete(path);
-
-            using (var stream = new FileStream(path, FileMode.CreateNew))
-                serializer.Serialize(stream, this);
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, this);
+                return stream.ToArray();
+            }
         }
 
-        public static Database LoadXml(string path)
+        public static Database LoadXml(byte[] data)
         {
-            using (var stream = new FileStream(path, FileMode.Open))
-                return serializer.Deserialize(stream) as Database;
-        }
-
-        public static Database LoadXml(byte[] buffer)
-        {
-            using(var stream = new MemoryStream(buffer))
-                return serializer.Deserialize(stream) as Database;
+            using (var stream = new MemoryStream(data))
+                return Serializer.Deserialize(stream) as Database;
         }
 
         public override string ToString()

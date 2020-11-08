@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Maestro.Common;
 using Maestro.Common.Model;
 
 namespace Maestro.Generator
@@ -11,6 +13,9 @@ namespace Maestro.Generator
         private Database database = new Database();
         private string fileName;
 
+        private const string DatabaseExtensions = ".mtrdb";
+        private const string CompressedDatabaseExtension = ".mtrcp";
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -34,7 +39,18 @@ namespace Maestro.Generator
         public void Load(string path)
         {
             FileName = path;
-            Database = Database.LoadXml(path);
+
+            switch (Path.GetExtension(FileName).ToLowerInvariant())
+            {
+                case CompressedDatabaseExtension:
+                    Database = Database.LoadXml(File.ReadAllBytes(FileName).Decompress());
+                    break;
+                case DatabaseExtensions:
+                    Database = Database.LoadXml(File.ReadAllBytes(FileName));
+                    break;
+                default:
+                    throw new Exception("Unknown file extension");
+            }
         }
 
         public void Save(string path = null)
@@ -42,19 +58,25 @@ namespace Maestro.Generator
             if (!string.IsNullOrWhiteSpace(path))
                 FileName = path;
 
-            Database.SaveXml(FileName);
+            switch (Path.GetExtension(FileName).ToLowerInvariant())
+            {
+                case CompressedDatabaseExtension:
+                    File.WriteAllBytes(FileName, Database.SaveXml().Compress());
+                    break;
+                case DatabaseExtensions:
+                    File.WriteAllBytes(FileName, Database.SaveXml());
+                    break;
+                default:
+                    throw new Exception("Unknown file extension");
+            }
+
             Generate();
         }
 
         public void Generate()
         {
-            string output = Path.Combine(Path.GetDirectoryName(FileName), database.GenerationDirectory);
-            if (!Directory.Exists(output))
-                Directory.CreateDirectory(output);
-
             // TODO generate the output files (c++ code and maestro config binary file)
         }
-
 
 
     }

@@ -6,7 +6,7 @@
         xmlns:model="clr-namespace:Maestro.Generator"
         xmlns:view="clr-namespace:Maestro.Generator.View"
         mc:Ignorable="d"
-        Title="{Binding FileName, StringFormat=Maestro Generator - {0}}" Height="900" Width="1500">
+        Title="{Binding RelativeSource={RelativeSource Self}, Path=WindowTitle}" Height="900" Width="1500">
 
     <Window.Resources>
         <Style x:Key="validationTooltipStyle" TargetType="{x:Type ToolTip}">

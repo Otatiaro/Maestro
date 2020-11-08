@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Maestro.Common.Protocol;
+using Maestro.Common.Protocol.Simulator;
 using Maestro.UWP.Communication;
 
 // Pour plus d'informations sur le modèle d'élément Page vierge, consultez la page https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -26,7 +27,7 @@ namespace Maestro.UWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private readonly Scanner _scanner = new Scanner(new []{new SerialManager()});
+        private readonly Scanner _scanner = new Scanner(new IChannelManager[] { /*new SerialManager(),*/ new SimulatorChannelManager(Environment.CurrentDirectory) });
 
         public ObservableCollection<Device> Devices { get; } = new ObservableCollection<Device>();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro.Common.Protocol.Packet
 {
@@ -12,7 +13,10 @@ namespace Maestro.Common.Protocol.Packet
                 case 0:
                     return new ProtocolVersionPacket(payload);
                 case Commands.Descriptor:
-                    return new DescriptorPacket(payload);
+                    if ((payload ?? Array.Empty<byte>()).Any())
+                        return new DescriptorPacket(payload);
+                    else
+                        return new GetDescriptorPacket();
                 case Commands.PackageData:
                     return new PackageDataPacket(payload);
                 case Commands.GetValues:

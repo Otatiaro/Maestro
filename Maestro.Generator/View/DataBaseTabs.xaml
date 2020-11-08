@@ -73,20 +73,6 @@
                     </GroupBox>
                 </Grid>
 
-                <GroupBox Header="Code Generation">
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Content="Code _generation directory:" Target="{Binding ElementName=DirectoryTxt}"/>
-                            <TextBox Grid.Column="1" Margin="2" Name="DirectoryTxt" Text="{Binding GenerationDirectory}"/>
-
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
             </StackPanel>
         </TabItem>
 
